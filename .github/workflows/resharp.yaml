@@ -37,9 +37,8 @@ jobs:
       - name: Cleanup
         run: |
           echo '::group::Cleanup'
-          PROJECT_PATH=${{ inputs.project-path }}
-          jb cleanupcode \
-            ${PROJECT_PATH%/}/*.sln
+          ls ..//*.sln
+          jb cleanupcode ..//*.sln
           echo '::endgroup::'
         shell: bash
 
