@@ -16,7 +16,7 @@ jobs:
       - name: Cleanup
         run: |
           echo '::group::Cleanup'
-          ls ..//*.sln
+          ls 
           jb cleanupcode ..//*.sln
           echo '::endgroup::'
         shell: bash
