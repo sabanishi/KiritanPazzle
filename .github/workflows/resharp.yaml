@@ -1,0 +1,46 @@
+name: Resharper Code Formatting
+
+on:
+  workflow_dispatch:
+
+jobs:
+  format-code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.0'
+
+      - name: Install ReSharper CLI
+        run: |
+          mkdir resharper
+          curl -L -o resharper-cli.zip https://download.jetbrains.com/resharper/commandline/JetBrains.ReSharper.CommandLineTools.2024.1.zip
+          unzip resharper-cli.zip -d resharper
+          chmod +x ./resharper/inspectcode.sh
+      
+      - name: Run ReSharper Code Cleanup
+        run: |
+          ./resharper/cleanupcode.sh --profile="Built-in: Full Cleanup" .
+
+      - name: Check for changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Apply ReSharper code cleanup"
+          else
+            echo "No changes detected"
+          fi
+
+      - name: Push changes
+        if: success()
+        run: |
+          git push
