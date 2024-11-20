@@ -34,9 +34,14 @@ jobs:
           # Dev Buildのメソッド呼び出し
           buildMethod: Export.VSSoluton
       
-      - name: Run ReSharper Code Cleanup
+      - name: Cleanup
         run: |
-          ./resharper/cleanupcode.sh --profile="Built-in: Full Cleanup" .
+          echo '::group::Cleanup'
+          PROJECT_PATH=${{ inputs.project-path }}
+          jb cleanupcode \
+            ${PROJECT_PATH%/}/*.sln
+          echo '::endgroup::'
+        shell: bash
 
       - name: Check for changes
         run: |
