@@ -10,8 +10,6 @@ jobs:
     services:
       custom-service:
         image: unityci/editor:2020.3.24f1-linux-il2cpp-2
-        options: >-
-          --env UNITY_LICENSE="${{ secrets.UNITY_LICENSE }}"
 
     steps:
       - name: Checkout repository
