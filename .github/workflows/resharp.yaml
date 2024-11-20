@@ -7,6 +7,12 @@ jobs:
   format-code:
     runs-on: ubuntu-latest
 
+    services:
+      custom-service:
+        image: unityci/editor:2020.3.24f1-linux-il2cpp-2
+        options: >-
+          --env UNITY_LICENSE=${{ secrets.UNITY_LICENSE }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -14,14 +20,10 @@ jobs:
           fetch-depth: 0
       
       - name: Setup Unity
-        uses: addnab/docker-run-action@v3
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-        with:
-          image: unityci/editor:2020.3.24f1-linux-il2cpp-2
-          run: |
-            ls
-            unity-editor -quit -batchmode -nographics -logfile - -executeMethod Export.VSSolution
+        run: |
+          ls
+          unity-editor -quit -batchmode -nographics -logfile - -executeMethod Export.VSSolution
+          ls
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
