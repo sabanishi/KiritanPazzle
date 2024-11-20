@@ -24,6 +24,11 @@ jobs:
           echo "$DOTNET_ROOT/tools" >> $GITHUB_PATH
         shell: bash
       
+      - name: Generate Solution
+        run: |
+          unity-editor -quit -batchmode -nographics -logfile - -executeMethod Export.VSSolution
+          ls *.sln *.csproj
+      
       - name: Run ReSharper Code Cleanup
         run: |
           ./resharper/cleanupcode.sh --profile="Built-in: Full Cleanup" .
