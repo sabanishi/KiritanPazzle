@@ -26,7 +26,6 @@ jobs:
           export PATH=$PATH:$PWD/dotnet
           dotnet new tool-manifest
           dotnet tool install JetBrains.ReSharper.GlobalTools
-        shell: bash
       
       - name: Cleanup
         run: |
@@ -34,7 +33,6 @@ jobs:
           ls
           dotnet jb cleanupcode --include="Assets/Scripts/**/*.cs" *.sln
           echo '::endgroup::'
-        shell: bash
 
       - name: Check for changes
         run: |
