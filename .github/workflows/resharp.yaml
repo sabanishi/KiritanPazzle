@@ -15,10 +15,10 @@ jobs:
       
       - name: Setup Unity
         uses: addnab/docker-run-action@v3
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           image: unityci/editor:2020.3.24f1-linux-il2cpp-2
-          env:
-            UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           run: |
             ls
             unity-editor -quit -batchmode -nographics -logfile - -executeMethod Export.VSSolution
