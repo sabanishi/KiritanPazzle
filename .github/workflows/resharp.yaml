@@ -32,7 +32,7 @@ jobs:
         run: |
           echo '::group::Cleanup'
           ls
-          jb cleanupcode *.sln
+          dotnet jb cleanupcode *.sln
           echo '::endgroup::'
         shell: bash
 
