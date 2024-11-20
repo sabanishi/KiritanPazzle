@@ -24,6 +24,8 @@ jobs:
           chmod +x dotnet-install.sh
           ./dotnet-install.sh --channel 6.0 --install-dir dotnet
           export PATH=$PATH:$PWD/dotnet
+          dotnet new tool-manifest
+          dotnet tool install JetBrains.ReSharper.GlobalTools
         shell: bash
       
       - name: Cleanup
