@@ -13,12 +13,14 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup Unity
-        uses: game-ci/unity-builder@v2
+        uses: addnab/docker-run-action@v3
+        with:
+          image: unityci/editor:2020.3.24f1-linux-il2cpp-2
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-        with:
-          unityVersion: 2020.3.24f1
-          buildMethod: Export.VSSoluton
+        run: |
+          ls
+          unity-editor -quit -batchmode -nographics -logfile - -executeMethod Export.VSSolution
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
