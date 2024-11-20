@@ -5,13 +5,18 @@ on:
 
 jobs:
   format-code:
-    image: unityci/editor:2021.3.15f1-webgl-1
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Setup Unity
+        uses: game-ci/unity-builder@v4
+        env:
+          unityVersion: 2020.3.24f1
+          buildMethod: Export.VSSoluton
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
