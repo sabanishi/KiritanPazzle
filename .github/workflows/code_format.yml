@@ -1,0 +1,100 @@
+name: CodeFormat
+
+on:
+  workflow_dispatch:
+
+inputs:
+  project-path:
+    description: 'プロジェクトパス'
+    required: false
+    default: './'
+  generate-solution-method:
+    description: 'ソリューション生成のために実行するメソッド'
+    required: true
+  cleanup-include:
+    description: 'Cleanup対象のパス'
+    required: true
+  cleanup-profile:
+    description: 'Cleanupのプロファイル'
+    required: true
+  cleanup-verbosity:
+    description: 'Cleanupのログ出力レベル'
+    required: false
+    default: 'WARN'
+  github-token:
+    description: 'GitHubのトークン'
+    required: true
+  add-paths:
+    description: 'コミット対象のファイルパス'
+    required: false
+    default: 
+
+jobs:
+  inspection:
+    runs-on: ubuntu-latest
+    name: Inspection
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Setup unity from project
+        uses: ./.github/quaunity-actions/setup-unity-from-project
+        with:
+          project-path: ${{ inputs.project-path }}
+          unity-modules: -m ios -m android
+      
+      - name: Install Resharper Tool
+        run: |
+          dotnet tool install -g JetBrains.ReSharper.GlobalTools || true
+          echo "$DOTNET_ROOT/tools" >> $GITHUB_PATH
+        shell: bash
+
+      - name: Generate Solution(Android)
+        uses: ./.github/quaunity-actions/unity-execute-method
+        with:
+          build-target: Android
+          project-path: ${{ inputs.project-path }}
+          execute-method: ${{ inputs.generate-solution-method }}
+
+      - name: Cleanup
+        run: |
+          echo '::group::Cleanup'
+          PROJECT_PATH=${{ inputs.project-path }}
+          jb cleanupcode --profile="${{ inputs.cleanup-profile }}" \
+            --include=${{ inputs.cleanup-include }} \
+            --verbosity=${{ inputs.cleanup-verbosity}} \
+            ${PROJECT_PATH%/}/*.sln
+          echo '::endgroup::'
+        shell: bash
+
+      - name: Generate Solution(iOS)
+        uses: ./.github/quaunity-actions/unity-execute-method
+        with:
+          build-target: iOS
+          project-path: ${{ inputs.project-path }}
+          execute-method: ${{ inputs.generate-solution-method }}
+
+      - name: Cleanup
+        run: |
+          echo '::group::Cleanup'
+          PROJECT_PATH=${{ inputs.project-path }}
+          jb cleanupcode --profile="${{ inputs.cleanup-profile }}" \
+            --include=${{ inputs.cleanup-include }} \
+            --verbosity=${{ inputs.cleanup-verbosity}} \
+            ${PROJECT_PATH%/}/*.sln
+          echo '::endgroup::'
+        shell: bash
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ inputs.github-token }}
+          commit-message: code cleanup
+          branch: "hogehoge/code_cleanup"
+          title: Code Cleanup
+          body: |
+            GitHub ActionsによるCode Cleanupです
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          add-paths: ${{ inputs.add-paths }}

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class GameScene : MonoBehaviour
 {
@@ -7,8 +6,9 @@ public class GameScene : MonoBehaviour
     public Transform StockOfTransform;
 
     public static GameScene instance { get; private set; }
+
     // Use this for initialization
-    void Start()
+    private void Start()
     {
         if (instance == null)
         {
@@ -21,9 +21,8 @@ public class GameScene : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-
     }
 
     public void Initialize(SceneEnum sceneEnum)
@@ -33,7 +32,7 @@ public class GameScene : MonoBehaviour
 
     public static void DestroyStocks()
     {
-        foreach(Transform _transform in instance.StockOfTransform)
+        foreach (Transform _transform in instance.StockOfTransform)
         {
             if (_transform != null)
             {
