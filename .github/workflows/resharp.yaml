@@ -20,19 +20,11 @@ jobs:
 
       - name: Install ReSharper CLI
         run: |
-          dotnet tool install -g JetBrains.ReSharper.GlobalTools || true
-          echo "$DOTNET_ROOT/tools" >> $GITHUB_PATH
+          wget https://dot.net/v1/dotnet-install.sh
+          chmod +x dotnet-install.sh
+          ./dotnet-install.sh --channel 6.0 --install-dir dotnet
+          export PATH=$PATH:$PWD/dotnet
         shell: bash
-      
-      - name: Generate Solution
-        uses: game-ci/unity-builder@v2
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-        with:
-          targetPlatform: WebGL
-          unityVersion: 2020.3.24f1
-          # Dev Buildのメソッド呼び出し
-          buildMethod: Export.VSSoluton
       
       - name: Cleanup
         run: |
